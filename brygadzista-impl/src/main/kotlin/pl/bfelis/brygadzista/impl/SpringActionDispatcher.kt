@@ -1,8 +1,8 @@
 package pl.bfelis.brygadzista.impl
 
 import org.springframework.aop.support.AopUtils
-import org.springframework.beans.factory.SmartInitializingSingleton
 import org.springframework.beans.factory.ListableBeanFactory
+import org.springframework.beans.factory.SmartInitializingSingleton
 import org.springframework.core.MethodParameter
 import org.springframework.core.ResolvableType
 import org.springframework.core.annotation.AnnotatedElementUtils
@@ -18,29 +18,35 @@ import java.lang.reflect.Modifier
 
 internal class SpringActionDispatcher(
     private val beanFactory: ListableBeanFactory,
-) : ActionDispatcher, SmartInitializingSingleton {
+) : ActionDispatcher,
+    SmartInitializingSingleton {
     private val handlers = mutableMapOf<Class<*>, RegisteredHandler>()
 
     override fun afterSingletonsInstantiated() {
         beanFactory.beanDefinitionNames.forEach { beanName ->
             val bean = beanFactory.getBean(beanName)
             val targetClass = AopUtils.getTargetClass(bean)
-            ReflectionUtils.getAllDeclaredMethods(targetClass)
+            ReflectionUtils
+                .getAllDeclaredMethods(targetClass)
                 .filter { method -> AnnotatedElementUtils.findMergedAnnotation(method, ActionHandler::class.java) != null }
                 .forEach { method ->
-                register(bean, method)
-            }
+                    register(bean, method)
+                }
         }
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun <R> dispatch(action: Action<R>): R {
-        val handler = handlers[action.javaClass]
-            ?: throw UnsupportedActionException(action.javaClass as Class<out Action<*>>)
+        val handler =
+            handlers[action.javaClass]
+                ?: throw UnsupportedActionException(action.javaClass as Class<out Action<*>>)
         return handler.invoke(ActionContext(action)) as R
     }
 
-    private fun register(bean: Any, method: Method) {
+    private fun register(
+        bean: Any,
+        method: Method,
+    ) {
         require(method.parameterCount == 1) {
             "@ActionHandler method ${method.qualifiedName()} must have exactly one parameter"
         }
@@ -65,12 +71,16 @@ internal class SpringActionDispatcher(
         }
     }
 
-    private data class RegisteredHandler(val bean: Any, val method: Method) {
-        fun invoke(context: ActionContext<*>): Any? = try {
-            method.invoke(bean, context)
-        } catch (exception: InvocationTargetException) {
-            throw exception.targetException
-        }
+    private data class RegisteredHandler(
+        val bean: Any,
+        val method: Method,
+    ) {
+        fun invoke(context: ActionContext<*>): Any? =
+            try {
+                method.invoke(bean, context)
+            } catch (exception: InvocationTargetException) {
+                throw exception.targetException
+            }
     }
 }
 

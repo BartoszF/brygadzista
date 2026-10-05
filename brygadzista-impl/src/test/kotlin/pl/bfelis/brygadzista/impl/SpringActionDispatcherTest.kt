@@ -1,19 +1,19 @@
 package pl.bfelis.brygadzista.impl
 
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertSame
-import kotlin.test.assertTrue
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import pl.bfelis.brygadzista.Action
 import pl.bfelis.brygadzista.ActionContext
 import pl.bfelis.brygadzista.ActionDispatcher
 import pl.bfelis.brygadzista.ActionHandler
 import pl.bfelis.brygadzista.UnsupportedActionException
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertSame
+import kotlin.test.assertTrue
 
 class SpringActionDispatcherTest {
     @Test
@@ -36,9 +36,10 @@ class SpringActionDispatcherTest {
         val dispatcher = context.getBean(ActionDispatcher::class.java)
         val failure = IllegalStateException("handler failed")
 
-        val thrown = assertFailsWith<IllegalStateException> {
-            dispatcher.dispatch(FailingAction(failure))
-        }
+        val thrown =
+            assertFailsWith<IllegalStateException> {
+                dispatcher.dispatch(FailingAction(failure))
+            }
 
         assertSame(failure, thrown)
         context.close()
@@ -46,27 +47,35 @@ class SpringActionDispatcherTest {
 
     @Test
     fun `duplicate handlers fail during startup`() {
-        val exception = assertFailsWith<Throwable> {
-            AnnotationConfigApplicationContext(DuplicateHandlerConfiguration::class.java)
-        }
+        val exception =
+            assertFailsWith<Throwable> {
+                AnnotationConfigApplicationContext(DuplicateHandlerConfiguration::class.java)
+            }
 
         assertTrue(exception.allMessages().contains("Multiple @ActionHandler methods registered"))
     }
 
     @Test
     fun `malformed handlers fail during startup`() {
-        val exception = assertFailsWith<Throwable> {
-            AnnotationConfigApplicationContext(MalformedHandlerConfiguration::class.java)
-        }
+        val exception =
+            assertFailsWith<Throwable> {
+                AnnotationConfigApplicationContext(MalformedHandlerConfiguration::class.java)
+            }
 
         assertTrue(exception.allMessages().contains("must accept ActionContext<A>"))
     }
 
-    data class GreetingAction(val name: String) : Action<String>
+    data class GreetingAction(
+        val name: String,
+    ) : Action<String>
 
-    data class NestedGreetingAction(val name: String) : Action<String>
+    data class NestedGreetingAction(
+        val name: String,
+    ) : Action<String>
 
-    data class FailingAction(val failure: IllegalStateException) : Action<Unit>
+    data class FailingAction(
+        val failure: IllegalStateException,
+    ) : Action<Unit>
 
     data object UnhandledAction : Action<String>
 
@@ -75,17 +84,16 @@ class SpringActionDispatcherTest {
         fun handle(context: ActionContext<GreetingAction>): String = "Hello ${context.action.name}"
     }
 
-    class NestedGreetingHandler(private val dispatcher: ActionDispatcher) {
+    class NestedGreetingHandler(
+        private val dispatcher: ActionDispatcher,
+    ) {
         @ActionHandler
-        fun handle(context: ActionContext<NestedGreetingAction>): String =
-            dispatcher.dispatch(GreetingAction(context.action.name))
+        fun handle(context: ActionContext<NestedGreetingAction>): String = dispatcher.dispatch(GreetingAction(context.action.name))
     }
 
     class ExceptionHandler {
         @ActionHandler
-        fun handle(context: ActionContext<FailingAction>) {
-            throw context.action.failure
-        }
+        fun handle(context: ActionContext<FailingAction>): Unit = throw context.action.failure
     }
 
     class FirstDuplicateHandler {
@@ -138,5 +146,4 @@ class SpringActionDispatcherTest {
     }
 }
 
-private fun Throwable.allMessages(): String =
-    generateSequence(this) { it.cause }.joinToString("\n") { it.message.orEmpty() }
+private fun Throwable.allMessages(): String = generateSequence(this) { it.cause }.joinToString("\n") { it.message.orEmpty() }
