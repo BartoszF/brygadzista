@@ -3,6 +3,7 @@ import org.gradle.api.publish.maven.MavenPublication
 plugins {
     `maven-publish`
     signing
+    id("com.gradleup.nmcp")
 }
 
 java {
