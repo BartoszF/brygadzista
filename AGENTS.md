@@ -12,6 +12,7 @@ Brygadzista is a Kotlin library for action execution with Spring integration.
 ## Principles
 
 - Keep the design KISS, DRY, YAGNI, and SOLID.
+- Clean code, concerns separated.
 - Prefer composition over inheritance.
 - Prefer functional Kotlin style where it improves clarity.
 - Use pragmatic tests: cover behavior and boundaries without testing implementation trivia. Don't overlap testing coverage.
