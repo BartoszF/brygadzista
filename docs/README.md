@@ -4,6 +4,26 @@ Brygadzista dispatches typed actions to methods on ordinary Spring beans.
 Adding `brygadzista-impl` to a Spring Boot application creates the
 `ActionDispatcher` automatically.
 
+## Maven coordinates
+
+Add the Spring integration module to a Maven Central consumer:
+
+```kotlin
+implementation("pl.bfelis:brygadzista-impl:<version>")
+```
+
+The public contracts are also available separately as
+`pl.bfelis:brygadzista-api:<version>`; the implementation module already
+depends on it.
+
+## Releasing
+
+Create and publish a GitHub Release for a final `vX.Y.Z` tag. GitHub Actions
+runs the tests, signs both modules, and publishes version `X.Y.Z` to Maven
+Central. Configure the protected `release` environment with the Central Portal
+token and the in-memory PGP signing key before the first release. Published
+versions are immutable; fix a failed release by creating a new version.
+
 ## Define an action
 
 ```kotlin
