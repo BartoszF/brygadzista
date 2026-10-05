@@ -46,11 +46,4 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           chmod +x ./gradlew
-          ./gradlew test \
-            :brygadzista-api:publishAllPublicationsToProjectLocalRepository \
-            :brygadzista-api:zipMavenCentralPortalPublication \
-            :brygadzista-api:releaseMavenCentralPortalPublication \
-            :brygadzista-impl:publishAllPublicationsToProjectLocalRepository \
-            :brygadzista-impl:zipMavenCentralPortalPublication \
-            :brygadzista-impl:releaseMavenCentralPortalPublication \
-            --no-daemon
+          ./gradlew test publishAggregationToCentralPortal --no-daemon

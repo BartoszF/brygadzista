@@ -1,24 +1,39 @@
+import org.gradle.api.publish.maven.MavenPublication
+
 plugins {
-    id("org.danilopianini.publish-on-central") version "9.2.12"
+    `maven-publish`
+    signing
 }
 
-publishOnCentral {
-    repoOwner.set("Bartosz Felis")
-    projectDescription.set("Public contracts and annotations for Brygadzista")
-    projectLongName.set("Brygadzista API")
-    licenseName.set("MIT License")
-    licenseUrl.set("https://opensource.org/license/mit")
-    projectUrl.set("https://github.com/BartoszF/brygadzista")
-    scmConnection.set("scm:git:https://github.com/BartoszF/brygadzista.git")
+java {
+    withSourcesJar()
+    withJavadocJar()
 }
 
 publishing {
-    publications.withType<MavenPublication>().configureEach {
-        pom {
-            developers {
-                developer {
-                    name.set("Bartosz Felis")
-                    email.set("felis.bartosz@gmail.com")
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+            pom {
+                name.set("Brygadzista API")
+                description.set("Public contracts and annotations for Brygadzista")
+                url.set("https://github.com/BartoszF/brygadzista")
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("https://opensource.org/license/mit")
+                    }
+                }
+                developers {
+                    developer {
+                        name.set("Bartosz Felis")
+                        email.set("felis.bartosz@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:https://github.com/BartoszF/brygadzista.git")
+                    developerConnection.set("scm:git:ssh://git@github.com/BartoszF/brygadzista.git")
+                    url.set("https://github.com/BartoszF/brygadzista")
                 }
             }
         }
@@ -30,4 +45,5 @@ signing {
         providers.environmentVariable("SIGNING_KEY").orNull,
         providers.environmentVariable("SIGNING_PASSWORD").orNull,
     )
+    sign(publishing.publications["mavenJava"])
 }
