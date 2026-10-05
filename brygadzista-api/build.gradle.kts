@@ -1,5 +1,5 @@
 plugins {
-    id("org.danilopianini.publish-on-central") version "9.2.10"
+    id("org.danilopianini.publish-on-central") version "9.2.12"
 }
 
 publishOnCentral {
