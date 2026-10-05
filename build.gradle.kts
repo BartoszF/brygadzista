@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "pl.bfelis"
-version = "0.0.1-SNAPSHOT"
+version = System.getenv("RELEASE_VERSION") ?: "0.0.1-SNAPSHOT"
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
