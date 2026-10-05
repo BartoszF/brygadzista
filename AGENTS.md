@@ -5,7 +5,7 @@ Brygadzista is a Kotlin library for action execution with Spring integration.
 ## Structure
 
 - `brygadzista-api` contains public interfaces and annotations only.
-- `brygadzista-impl` contains implementations and Spring integration.
+- `brygadzista-spring` contains implementations and Spring integration.
 - `docs` contains user-facing documentation.
 - `examples` contains focused usage examples.
 

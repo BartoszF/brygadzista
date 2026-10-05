@@ -25,7 +25,7 @@ nmcpAggregation {
 
 dependencies {
     nmcpAggregation(project(":brygadzista-api"))
-    nmcpAggregation(project(":brygadzista-impl"))
+    nmcpAggregation(project(":brygadzista-spring"))
 }
 
 subprojects {
@@ -38,7 +38,7 @@ subprojects {
         mavenCentral()
     }
 
-    dependencies.add("testImplementation", "org.jetbrains.kotlin:kotlin-test:2.3.0")
+    dependencies.add("testImplementation", Dependencies.kotlinTest)
 
     extensions.configure<KotlinJvmProjectExtension> {
         jvmToolchain(25)

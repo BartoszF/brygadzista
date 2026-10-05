@@ -6,7 +6,7 @@ rootProject.name = "brygadzista"
 
 include(
     ":brygadzista-api",
-    ":brygadzista-impl",
+    ":brygadzista-spring",
     ":examples:simple-example",
     ":examples:multiple-contexts",
     ":examples:security-example",
