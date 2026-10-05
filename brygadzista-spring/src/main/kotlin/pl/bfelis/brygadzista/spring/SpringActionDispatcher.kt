@@ -1,4 +1,4 @@
-package pl.bfelis.brygadzista.impl
+package pl.bfelis.brygadzista.spring
 
 import org.springframework.aop.support.AopUtils
 import org.springframework.beans.factory.ListableBeanFactory

@@ -1,7 +1,7 @@
 # Brygadzista v0
 
 Brygadzista dispatches typed actions to methods on ordinary Spring beans.
-Adding `brygadzista-impl` to a Spring Boot application creates the
+Adding `brygadzista-spring` to a Spring Boot application creates the
 `ActionDispatcher` automatically.
 
 ## Maven coordinates
@@ -9,7 +9,7 @@ Adding `brygadzista-impl` to a Spring Boot application creates the
 Add the Spring integration module to a Maven Central consumer:
 
 ```kotlin
-implementation("pl.bfelis:brygadzista-impl:<version>")
+implementation("pl.bfelis:brygadzista-spring:<version>")
 ```
 
 The public contracts are also available separately as

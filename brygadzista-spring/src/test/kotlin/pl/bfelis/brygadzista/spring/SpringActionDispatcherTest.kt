@@ -1,4 +1,4 @@
-package pl.bfelis.brygadzista.impl
+package pl.bfelis.brygadzista.spring
 
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
