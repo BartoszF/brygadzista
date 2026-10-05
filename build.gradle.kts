@@ -10,6 +10,10 @@ plugins {
 group = "pl.bfelis"
 version = System.getenv("RELEASE_VERSION") ?: "0.0.1-SNAPSHOT"
 
+repositories {
+    mavenCentral()
+}
+
 nmcpAggregation {
     centralPortal {
         username = System.getenv("MAVEN_CENTRAL_PORTAL_USERNAME") ?: ""
