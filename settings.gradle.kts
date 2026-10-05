@@ -3,4 +3,4 @@ plugins {
 }
 rootProject.name = "brygadzista"
 
-include(":brygadzista-api", ":brygadzista-impl")
+include(":brygadzista-api", ":brygadzista-impl", ":examples:simple-example")

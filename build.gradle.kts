@@ -3,10 +3,11 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 
 plugins {
     kotlin("jvm") version "2.3.0" apply false
+    id("org.springframework.boot") version "4.1.1" apply false
 }
 
 group = "pl.bfelis"
-version = "1.0-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
