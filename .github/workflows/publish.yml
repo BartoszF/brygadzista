@@ -46,4 +46,4 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: |
           chmod +x ./gradlew
-          ./gradlew test publishAggregationToCentralPortal --no-daemon
+          ./gradlew test publishAggregationToCentralPortal --no-daemon --stacktrace
