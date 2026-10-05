@@ -7,9 +7,11 @@ import pl.bfelis.brygadzista.ActionContextFactory
 import pl.bfelis.brygadzista.ActionDispatcher
 import pl.bfelis.brygadzista.ActionInterceptor
 
+/** Provides Brygadzista's default Spring Boot action dispatcher. */
 @AutoConfiguration
 @ConditionalOnMissingBean(ActionDispatcher::class)
 class BrygadzistaAutoConfiguration {
+    /** Creates the default dispatcher from the application's handlers and extensions. */
     @Bean
     fun actionDispatcher(
         beanFactory: org.springframework.beans.factory.ListableBeanFactory,
