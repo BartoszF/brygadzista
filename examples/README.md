@@ -9,3 +9,7 @@ Available examples:
 
 - [`simple-example`](simple-example/) — a Spring Boot application with one
   action, handler, and controller endpoint.
+- [`multiple-contexts`](multiple-contexts/) — two controllers dispatching
+  actions with different custom contexts to the same service.
+- [`security-example`](security-example/) — Spring Security Basic authentication
+  with action-driven public, authenticated, and admin access.

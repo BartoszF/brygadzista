@@ -1,11 +1,11 @@
-package pl.bfelis.brygadzista.example
+package pl.bfelis.brygadzista.multiplecontexts
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication(proxyBeanMethods = false)
-class ExampleApplication
+class MultipleContextsApplication
 
 fun main(args: Array<String>) {
-    runApplication<ExampleApplication>(*args)
+    runApplication<MultipleContextsApplication>(*args)
 }

@@ -1,5 +1,5 @@
 package pl.bfelis.brygadzista
 
-data class ActionContext<out A : Action<*>>(
-    val action: A,
+open class ActionContext<out A : Action<*>>(
+    open val action: A,
 )

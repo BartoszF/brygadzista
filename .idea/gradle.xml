@@ -11,6 +11,9 @@
             <option value="$PROJECT_DIR$/brygadzista-api" />
             <option value="$PROJECT_DIR$/brygadzista-impl" />
             <option value="$PROJECT_DIR$/examples" />
+            <option value="$PROJECT_DIR$/examples/multiple-contexts" />
+            <option value="$PROJECT_DIR$/examples/security-example" />
+            <option value="$PROJECT_DIR$/examples/simple-example" />
           </set>
         </option>
       </GradleProjectSettings>

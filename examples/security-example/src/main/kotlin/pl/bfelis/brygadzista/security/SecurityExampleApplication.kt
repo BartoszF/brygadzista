@@ -1,11 +1,11 @@
-package pl.bfelis.brygadzista.example
+package pl.bfelis.brygadzista.security
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication(proxyBeanMethods = false)
-class ExampleApplication
+class SecurityExampleApplication
 
 fun main(args: Array<String>) {
-    runApplication<ExampleApplication>(*args)
+    runApplication<SecurityExampleApplication>(*args)
 }
