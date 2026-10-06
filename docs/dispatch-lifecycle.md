@@ -7,11 +7,15 @@ classes for methods annotated with @ActionHandler. A handler must:
 
 - accept exactly one parameter;
 - accept ActionContext<A> or a subclass of it;
-- declare a concrete Action type for A.
+- declare a concrete Action type for A;
+- return a type assignable to the result type declared by the action's
+  `Action<R>` implementation.
 
 The dispatcher registers that concrete action type against the bean method. A
-malformed handler or two handlers for the same action type fail application
-startup, so routing mistakes do not wait for the first request.
+malformed handler, an incompatible return type, or two handlers for the same
+action type fail application startup, so routing mistakes do not wait for the
+first request. A subtype return is valid when it satisfies the action's result
+type.
 
 ## Routing and context creation
 

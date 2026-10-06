@@ -4,6 +4,8 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.aop.framework.ProxyFactory
+import org.aopalliance.intercept.MethodInterceptor
 import pl.bfelis.brygadzista.Action
 import pl.bfelis.brygadzista.ActionContext
 import pl.bfelis.brygadzista.ActionContextFactory
@@ -26,9 +28,35 @@ class SpringActionDispatcherTest {
 
         assertEquals("Hello Ada", dispatcher.dispatch(GreetingAction("Ada")))
         assertEquals("Hello Ada", dispatcher.dispatch(NestedGreetingAction("Ada")))
+        assertEquals("Hello Ada", dispatcher.dispatch(SubtypeGreetingAction("Ada")))
         assertFailsWith<UnsupportedActionException> {
             dispatcher.dispatch(UnhandledAction)
         }
+
+        context.close()
+    }
+
+    @Test
+    fun `incompatible handler return types fail during startup`() {
+        val exception =
+            assertFailsWith<Throwable> {
+                AnnotationConfigApplicationContext(MismatchedReturnConfiguration::class.java)
+            }
+
+        val messages = exception.allMessages()
+        assertTrue(messages.contains("MismatchedReturnHandler#handle"))
+        assertTrue(messages.contains("java.lang.String"))
+        assertTrue(messages.contains("int"))
+    }
+
+    @Test
+    fun `aop proxied handlers are invoked through the proxy`() {
+        val context = AnnotationConfigApplicationContext(ProxiedHandlerConfiguration::class.java)
+        val dispatcher = context.getBean(ActionDispatcher::class.java)
+        val events = context.getBean(ProxyEvents::class.java)
+
+        assertEquals("Hello Ada", dispatcher.dispatch(ProxiedGreetingAction("Ada")))
+        assertEquals(listOf("proxy", "handler"), events.values)
 
         context.close()
     }
@@ -126,6 +154,18 @@ class SpringActionDispatcherTest {
         val name: String,
     ) : Action<String>
 
+    data class SubtypeGreetingAction(
+        val name: String,
+    ) : Action<CharSequence>
+
+    data class ProxiedGreetingAction(
+        val name: String,
+    ) : Action<String>
+
+    data class MismatchedReturnAction(
+        val name: String,
+    ) : Action<String>
+
     data class FailingAction(
         val failure: IllegalStateException,
     ) : Action<Unit>
@@ -148,9 +188,37 @@ class SpringActionDispatcherTest {
         fun handle(context: ActionContext<NestedGreetingAction>): String = dispatcher.dispatch(GreetingAction(context.action.name))
     }
 
+    class SubtypeGreetingHandler {
+        @ActionHandler
+        fun handle(context: ActionContext<SubtypeGreetingAction>): String = "Hello ${context.action.name}"
+    }
+
     class ExceptionHandler {
         @ActionHandler
         fun handle(context: ActionContext<FailingAction>): Unit = throw context.action.failure
+    }
+
+    class MismatchedReturnHandler {
+        @ActionHandler
+        fun handle(context: ActionContext<MismatchedReturnAction>): Int = context.action.name.length
+    }
+
+    interface ProxiedGreetingHandlerContract {
+        fun handle(context: ActionContext<ProxiedGreetingAction>): String
+    }
+
+    class ProxiedGreetingHandler(
+        private val events: ProxyEvents,
+    ) : ProxiedGreetingHandlerContract {
+        @ActionHandler
+        override fun handle(context: ActionContext<ProxiedGreetingAction>): String {
+            events.values += "handler"
+            return "Hello ${context.action.name}"
+        }
+    }
+
+    class ProxyEvents {
+        val values = mutableListOf<String>()
     }
 
     class CustomGreetingContext(
@@ -256,6 +324,32 @@ class SpringActionDispatcherTest {
 
         @Bean
         fun nestedGreetingHandler(dispatcher: ActionDispatcher) = NestedGreetingHandler(dispatcher)
+
+        @Bean
+        fun subtypeGreetingHandler() = SubtypeGreetingHandler()
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @EnableAutoConfiguration
+    class MismatchedReturnConfiguration {
+        @Bean
+        fun mismatchedReturnHandler() = MismatchedReturnHandler()
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    @EnableAutoConfiguration
+    class ProxiedHandlerConfiguration {
+        @Bean
+        fun proxyEvents() = ProxyEvents()
+
+        @Bean
+        fun proxiedGreetingHandler(events: ProxyEvents): Any =
+            ProxyFactory(ProxiedGreetingHandler(events)).apply {
+                addAdvice(MethodInterceptor { invocation ->
+                    events.values += "proxy"
+                    invocation.proceed()
+                })
+            }.proxy
     }
 
     @Configuration(proxyBeanMethods = false)
