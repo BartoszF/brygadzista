@@ -75,17 +75,25 @@ internal class SpringActionDispatcher(
         }
 
         val actionContextType = contextType.`as`(ActionContext::class.java)
-        val actionType = actionContextType.getGeneric(0).resolve()
-        require(actionType != null && Action::class.java.isAssignableFrom(actionType)) {
+        val actionType = actionContextType.getGeneric(0)
+        val actionClass = actionType.resolve()
+        require(actionClass != null && Action::class.java.isAssignableFrom(actionClass)) {
             "@ActionHandler method ${method.qualifiedName()} must declare a concrete Action type"
         }
-        require(!actionType.isInterface && !Modifier.isAbstract(actionType.modifiers)) {
+        require(!actionClass.isInterface && !Modifier.isAbstract(actionClass.modifiers)) {
             "@ActionHandler method ${method.qualifiedName()} must declare a concrete Action type"
         }
 
+        val resultType = actionType.`as`(Action::class.java).getGeneric(0)
+        val returnType = ResolvableType.forMethodReturnType(method)
+        require(resultType.acceptsHandlerReturnType(returnType)) {
+            "@ActionHandler method ${method.qualifiedName()} must return ${resultType} or a subtype, " +
+                "but declares ${returnType} for action ${actionClass.name}"
+        }
+
         val invocableMethod = AopUtils.selectInvocableMethod(method, bean.javaClass)
-        check(handlers.putIfAbsent(actionType, RegisteredHandler(bean, invocableMethod, contextClass)) == null) {
-            "Multiple @ActionHandler methods registered for ${actionType.name}"
+        check(handlers.putIfAbsent(actionClass, RegisteredHandler(bean, invocableMethod, contextClass)) == null) {
+            "Multiple @ActionHandler methods registered for ${actionClass.name}"
         }
     }
 
@@ -104,3 +112,6 @@ internal class SpringActionDispatcher(
 }
 
 private fun Method.qualifiedName(): String = "${declaringClass.name}#$name"
+
+private fun ResolvableType.acceptsHandlerReturnType(returnType: ResolvableType): Boolean =
+    isAssignableFrom(returnType) || (resolve() == Unit::class.java && returnType.resolve() == Void.TYPE)
