@@ -1,8 +1,8 @@
 # Brygadzista documentation
 
-Brygadzista is a synchronous action dispatcher for Kotlin and Spring Boot.
-Actions are ordinary typed values, handlers are methods on ordinary Spring
-beans, and the dispatcher supplies the small amount of ceremony between them.
+Brygadzista dispatches typed actions in Kotlin Spring Boot and Ktor
+applications. Spring handlers are synchronous methods on ordinary beans; Ktor
+handlers are registered suspending functions.
 
 ## Guides
 
@@ -12,11 +12,13 @@ beans, and the dispatcher supplies the small amount of ceremony between them.
   validated, selected, and invoked.
 - [Customization](customization.md) — add request context, security checks,
   auditing, and other cross-cutting behavior.
+- [Ktor](ktor.md) — install the Ktor plugin and register suspending handlers.
 
 ## Capabilities
 
 - Typed actions with typed results through `Action<R>`.
 - Automatic Spring Boot configuration of `ActionDispatcher`.
+- Ktor application plugin with `SuspendingActionDispatcher` access per call.
 - Handler discovery through `@ActionHandler` methods on Spring beans.
 - Exact runtime-class routing, including nested dispatches.
 - Ordered `ActionContextFactory` extensions for request-specific data.
@@ -26,11 +28,12 @@ beans, and the dispatcher supplies the small amount of ceremony between them.
 
 ## Boundaries
 
-The current implementation is intentionally small. It is synchronous and does
-not provide built-in authorization, polymorphic action routing,
-coroutine/reactive handlers, or custom configuration properties. Those concerns
-can be composed from context factories, interceptors, and normal Spring
-configuration. The [security example](../examples/security-example/) shows one
-such composition.
+The current implementation is intentionally small. Spring dispatch is
+synchronous; Ktor dispatch is coroutine-native. Neither integration provides
+built-in authorization, polymorphic action routing, DI adapters, reactive/Flow
+handlers, or custom configuration properties. Those concerns can be composed
+from context factories, interceptors, and normal application configuration.
+The [security example](../examples/security-example/) shows one Spring
+composition.
 
 For complete runnable applications, see the [examples](../examples/README.md).

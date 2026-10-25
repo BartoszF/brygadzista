@@ -13,3 +13,5 @@ Available examples:
   actions with different custom contexts to the same service.
 - [`security-example`](security-example/) — Spring Security Basic authentication
   with action-driven public, authenticated, and admin access.
+- [`ktor-example`](ktor-example/) — a Ktor route dispatching a suspending action
+  handler.

@@ -25,6 +25,7 @@ nmcpAggregation {
 
 dependencies {
     nmcpAggregation(project(":brygadzista-api"))
+    nmcpAggregation(project(":brygadzista-ktor"))
     nmcpAggregation(project(":brygadzista-spring"))
 }
 
