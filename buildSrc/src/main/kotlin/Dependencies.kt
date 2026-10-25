@@ -7,6 +7,10 @@ object Dependencies {
         const val serverTestHost = "io.ktor:ktor-server-test-host:${Versions.ktor}"
     }
 
+    object Koin {
+        const val ktor = "io.insert-koin:koin-ktor:${Versions.koin}"
+    }
+
     object SpringBoot {
         const val autoconfigure = "org.springframework.boot:spring-boot-autoconfigure:${Versions.springBoot}"
         const val starterSecurity = "org.springframework.boot:spring-boot-starter-security:${Versions.springBoot}"

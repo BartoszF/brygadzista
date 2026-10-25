@@ -15,3 +15,5 @@ Available examples:
   with action-driven public, authenticated, and admin access.
 - [`ktor-example`](ktor-example/) — a Ktor route dispatching a suspending action
   handler.
+- [`ktor-koin-example`](ktor-koin-example/) — a Ktor application importing its
+  action handlers from Koin.

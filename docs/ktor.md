@@ -61,3 +61,49 @@ Both factories and interceptors are suspending, so they can use normal Ktor
 coroutine APIs.
 
 See the runnable [Ktor example](../examples/ktor-example/).
+
+## Koin
+
+Add the optional Koin adapter when handlers and extensions are defined in Koin:
+
+~~~kotlin
+dependencies {
+    implementation("pl.bfelis:brygadzista-ktor-koin:<version>")
+}
+~~~
+
+Bind typed handler descriptors in a Koin module. The descriptor keeps the
+action and context types, while Koin supplies the handler's collaborators.
+Give each handler, factory, or interceptor of the same type a distinct Koin
+qualifier so Koin can retain every binding.
+
+~~~kotlin
+val actions = module {
+    single { GreetingService() }
+    single<KtorActionHandler>(named("greeting")) {
+        val service = get<GreetingService>()
+        ktorActionHandler<GreetingAction, Greeting> { context ->
+            service.greet(context.action.name)
+        }
+    }
+}
+~~~
+
+Install Koin before the Brygadzista Koin plugin. `KoinIsolated` is recommended
+because the adapter reads Koin from the current Ktor application rather than
+the global context.
+
+~~~kotlin
+fun Application.module() {
+    install(KoinIsolated) { modules(actions) }
+    install(BrygadzistaKoin)
+}
+~~~
+
+The adapter also imports every `KtorActionContextFactory` and
+`SuspendingActionInterceptor` bound in Koin. Their order is the order Koin
+returns: factories are tried first-to-last and interceptors are outermost-to-
+innermost.
+
+Use `contextualKtorActionHandler<Action, Result, Context>` for a handler that
+requires a custom action context. See the runnable [Ktor Koin example](../examples/ktor-koin-example/).
