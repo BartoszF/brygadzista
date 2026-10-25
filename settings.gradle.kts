@@ -7,7 +7,9 @@ rootProject.name = "brygadzista"
 include(
     ":brygadzista-api",
     ":brygadzista-ktor",
+    ":brygadzista-ktor-koin",
     ":brygadzista-spring",
+    ":examples:ktor-koin-example",
     ":examples:ktor-example",
     ":examples:simple-example",
     ":examples:multiple-contexts",

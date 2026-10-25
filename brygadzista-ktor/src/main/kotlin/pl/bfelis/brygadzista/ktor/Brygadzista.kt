@@ -46,6 +46,11 @@ object Brygadzista : BaseApplicationPlugin<Application, Brygadzista.Configuratio
             register(A::class.java, contextClass.java) { context -> handler(context as C) }
         }
 
+        /** Registers a reusable handler descriptor. */
+        fun handler(handler: KtorActionHandler) {
+            register(handler.actionClass, handler.contextClass, handler.invoke)
+        }
+
         @PublishedApi
         internal fun register(
             actionClass: Class<*>,
@@ -116,3 +121,30 @@ internal class RegisteredHandler(
     val contextClass: Class<*>,
     val invoke: suspend (ActionContext<*>) -> Any?,
 )
+
+/**
+ * A typed Ktor action handler that can be registered directly or supplied by a DI integration.
+ *
+ * Create instances with [ktorActionHandler] or [contextualKtorActionHandler].
+ */
+class KtorActionHandler @PublishedApi internal constructor(
+    @PublishedApi internal val actionClass: Class<*>,
+    @PublishedApi internal val contextClass: Class<*>,
+    @PublishedApi internal val invoke: suspend (ActionContext<*>) -> Any?,
+)
+
+/** Creates a handler that receives the default [KtorActionContext]. */
+@Suppress("UNCHECKED_CAST")
+inline fun <reified A : Action<R>, R> ktorActionHandler(
+    noinline handler: suspend (KtorActionContext<A>) -> R,
+): KtorActionHandler =
+    KtorActionHandler(A::class.java, KtorActionContext::class.java) { context ->
+        handler(context as KtorActionContext<A>)
+    }
+
+/** Creates a handler that requires a custom [ActionContext] subtype. */
+@Suppress("UNCHECKED_CAST")
+inline fun <reified A : Action<R>, R, reified C : ActionContext<A>> contextualKtorActionHandler(
+    noinline handler: suspend (C) -> R,
+): KtorActionHandler =
+    KtorActionHandler(A::class.java, C::class.java) { context -> handler(context as C) }
