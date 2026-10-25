@@ -1,7 +1,7 @@
 # Brygadzista
 
-*/brɨɡadʑista/* — Polish for “foreman”. A small Kotlin library that puts one
-Spring bean in charge of dispatching typed actions to their handlers.
+*/brɨɡadʑista/* — Polish for “foreman”. A small Kotlin library that dispatches
+typed actions to their handlers in Spring Boot and Ktor applications.
 
 Define an action, annotate one handler, and inject `ActionDispatcher` wherever
 the action should run. Brygadzista handles the wiring; your application keeps
@@ -19,7 +19,13 @@ dependencies {
 
 The Spring module brings in the public API module transitively. Use
 `pl.bfelis:brygadzista-api:<version>` directly only when you need the contracts
-without the Spring integration.
+without an integration. For Ktor applications, use:
+
+~~~kotlin
+dependencies {
+    implementation("pl.bfelis:brygadzista-ktor:<version>")
+}
+~~~
 
 ## Use
 
@@ -44,6 +50,9 @@ class GreetingController(private val dispatcher: ActionDispatcher) {
 
 Spring Boot discovers the handler and creates `ActionDispatcher` automatically.
 Handlers are selected by the action's exact runtime class.
+
+Ktor applications install `Brygadzista`, register suspending handlers explicitly,
+and dispatch through `call.actionDispatcher`. See the [Ktor guide](docs/ktor.md).
 
 Read the [documentation index](docs/README.md) for the dispatch lifecycle and
 extension points, or run the [examples](examples/README.md).

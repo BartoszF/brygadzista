@@ -1,6 +1,12 @@
 object Dependencies {
     const val kotlinTest = "org.jetbrains.kotlin:kotlin-test:${Versions.kotlinTest}"
 
+    object Ktor {
+        const val serverCore = "io.ktor:ktor-server-core:${Versions.ktor}"
+        const val serverNetty = "io.ktor:ktor-server-netty:${Versions.ktor}"
+        const val serverTestHost = "io.ktor:ktor-server-test-host:${Versions.ktor}"
+    }
+
     object SpringBoot {
         const val autoconfigure = "org.springframework.boot:spring-boot-autoconfigure:${Versions.springBoot}"
         const val starterSecurity = "org.springframework.boot:spring-boot-starter-security:${Versions.springBoot}"
